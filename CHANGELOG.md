@@ -4,10 +4,6 @@ All notable changes are documented here. Format loosely follows [Keep a Changelo
 
 ## [Unreleased]
 
-### Changed
-
-- **`meta.views` is no longer dropped silently.** Guided views (chapters) were retired in 3.0.0, but renderers ignored `meta.views` without telling anyone, so chapter notes disappeared on regeneration. `render`, `validate`, `deliver` and `finalize` now emit a non-blocking `meta/views-ignored` warning for a non-empty `meta.views`: it states that the field is retired and ignored, counts the chapters, lists each chapter's label and id and whether its note will not appear, and points to a migration path (move status text into node labels/sublabels or `cards`, use Route and Lens for paths; see "Upgrading from 2.x"). It appears on stderr and in `diagnostics[]` of `validate --json`, `deliver --json` and passing `finalize` receipts like the `i18n/*` warnings. Gates, exit codes and generated output are unchanged; inputs without `meta.views` produce no warning. `schemas/README.md` documents the migration.
-
 ## [3.2.0] — 2026-10-18
 
 ### Added
