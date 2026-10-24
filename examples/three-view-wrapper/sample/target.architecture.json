@@ -1,0 +1,226 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Notes service \u2014 Target",
+    "subtitle": "Sample \u00b7 invented system for illustration \u00b7 what we want to build",
+    "output": "target.architecture.html",
+    "quality_profile": "standard"
+  },
+  "components": [
+    {
+      "id": "user",
+      "type": "external",
+      "label": "User",
+      "sublabel": "browser",
+      "pos": [
+        20,
+        230
+      ],
+      "size": [
+        100,
+        54
+      ]
+    },
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "Web app",
+      "sublabel": "static pages",
+      "pos": [
+        180,
+        230
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "Proposed"
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "API",
+      "sublabel": "REST \u00b7 stateless",
+      "pos": [
+        370,
+        230
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "Proposed"
+    },
+    {
+      "id": "auth",
+      "type": "security",
+      "label": "Auth",
+      "sublabel": "token verification",
+      "pos": [
+        370,
+        70
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "Proposed"
+    },
+    {
+      "id": "cache",
+      "type": "database",
+      "label": "Cache",
+      "sublabel": "read-through",
+      "pos": [
+        590,
+        70
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "Proposed"
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "Database",
+      "sublabel": "primary + replica",
+      "pos": [
+        790,
+        230
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "Proposed"
+    },
+    {
+      "id": "queue",
+      "type": "messagebus",
+      "label": "Job queue",
+      "sublabel": "indexing jobs",
+      "pos": [
+        590,
+        390
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "Proposed"
+    },
+    {
+      "id": "worker",
+      "type": "backend",
+      "label": "Worker",
+      "sublabel": "async indexing",
+      "pos": [
+        790,
+        390
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "Proposed"
+    },
+    {
+      "id": "search",
+      "type": "backend",
+      "label": "Search index",
+      "sublabel": "full-text",
+      "pos": [
+        990,
+        230
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "Proposed"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Sample deployment",
+      "wraps": [
+        "web",
+        "api",
+        "auth",
+        "cache",
+        "db",
+        "queue",
+        "worker",
+        "search"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "user-web",
+      "from": "user",
+      "to": "web",
+      "label": "open"
+    },
+    {
+      "id": "web-api",
+      "from": "web",
+      "to": "api",
+      "label": "POST /notes"
+    },
+    {
+      "id": "api-auth",
+      "from": "api",
+      "to": "auth",
+      "label": "verify token"
+    },
+    {
+      "id": "api-db",
+      "from": "api",
+      "to": "db",
+      "label": "SQL"
+    },
+    {
+      "id": "api-cache",
+      "from": "api",
+      "to": "cache",
+      "label": "read-through",
+      "variant": "dashed"
+    },
+    {
+      "id": "api-queue",
+      "from": "api",
+      "to": "queue",
+      "label": "enqueue",
+      "variant": "dashed"
+    },
+    {
+      "id": "queue-worker",
+      "from": "queue",
+      "to": "worker",
+      "label": "consume"
+    },
+    {
+      "id": "worker-search",
+      "from": "worker",
+      "to": "search",
+      "label": "index",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Target",
+      "items": [
+        "Read-through cache in front of the database",
+        "Indexing moves to a queue and a worker",
+        "Dedicated search index"
+      ]
+    }
+  ]
+}

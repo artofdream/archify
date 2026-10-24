@@ -1,0 +1,293 @@
+{
+  "current": [
+    {
+      "nodes": [
+        "user",
+        "web"
+      ],
+      "edges": [
+        [
+          "user",
+          "web"
+        ]
+      ],
+      "title": "Open the app",
+      "hops": "User → Web app",
+      "status": "Existing",
+      "color": "#0b7aa8",
+      "caption": "The user opens the notes page."
+    },
+    {
+      "nodes": [
+        "web",
+        "api"
+      ],
+      "edges": [
+        [
+          "web",
+          "api"
+        ]
+      ],
+      "title": "Create a note",
+      "hops": "Web app → API",
+      "status": "Existing",
+      "color": "#0b7aa8",
+      "caption": "The page sends POST /notes with the note text."
+    },
+    {
+      "nodes": [
+        "api",
+        "auth"
+      ],
+      "edges": [
+        [
+          "api",
+          "auth"
+        ]
+      ],
+      "title": "Check the session",
+      "hops": "API → Auth",
+      "status": "Existing",
+      "color": "#0b7aa8",
+      "caption": "The API verifies the session cookie."
+    },
+    {
+      "nodes": [
+        "api",
+        "db"
+      ],
+      "edges": [
+        [
+          "api",
+          "db"
+        ]
+      ],
+      "title": "Save the note",
+      "hops": "API → Database",
+      "status": "Existing",
+      "color": "#0b7aa8",
+      "caption": "The API inserts the note with SQL."
+    },
+    {
+      "nodes": [
+        "api",
+        "db"
+      ],
+      "edges": [
+        [
+          "api",
+          "db"
+        ]
+      ],
+      "title": "Make it searchable",
+      "hops": "API → Database",
+      "status": "Existing",
+      "color": "#0b7aa8",
+      "caption": "Search is a SQL LIKE scan over the notes table. Slow on large tables."
+    }
+  ],
+  "target": [
+    {
+      "nodes": [
+        "user",
+        "web"
+      ],
+      "edges": [
+        [
+          "user",
+          "web"
+        ]
+      ],
+      "title": "Open the app",
+      "hops": "User → Web app",
+      "status": "Proposed",
+      "color": "#e11d74",
+      "caption": "Same as today."
+    },
+    {
+      "nodes": [
+        "web",
+        "api"
+      ],
+      "edges": [
+        [
+          "web",
+          "api"
+        ]
+      ],
+      "title": "Create a note",
+      "hops": "Web app → API",
+      "status": "Proposed",
+      "color": "#e11d74",
+      "caption": "Same as today; the API becomes stateless."
+    },
+    {
+      "nodes": [
+        "api",
+        "auth"
+      ],
+      "edges": [
+        [
+          "api",
+          "auth"
+        ]
+      ],
+      "title": "Check the session",
+      "hops": "API → Auth",
+      "status": "Proposed",
+      "color": "#e11d74",
+      "caption": "Token verification replaces the session cookie."
+    },
+    {
+      "nodes": [
+        "api",
+        "cache",
+        "db"
+      ],
+      "edges": [
+        [
+          "api",
+          "cache"
+        ],
+        [
+          "api",
+          "db"
+        ]
+      ],
+      "title": "Save the note",
+      "hops": "API → Database (cache aside)",
+      "status": "Proposed",
+      "color": "#e11d74",
+      "caption": "The API writes to the primary database; reads go through the cache."
+    },
+    {
+      "nodes": [
+        "api",
+        "queue",
+        "worker",
+        "search"
+      ],
+      "edges": [
+        [
+          "api",
+          "queue"
+        ],
+        [
+          "queue",
+          "worker"
+        ],
+        [
+          "worker",
+          "search"
+        ]
+      ],
+      "title": "Make it searchable",
+      "hops": "API → Queue → Worker → Search index",
+      "status": "Proposed",
+      "color": "#e11d74",
+      "caption": "The API enqueues an indexing job; the worker updates the search index."
+    }
+  ],
+  "gaps": [
+    {
+      "nodes": [
+        "user",
+        "web"
+      ],
+      "edges": [
+        [
+          "user",
+          "web"
+        ]
+      ],
+      "title": "Open the app",
+      "hops": "User → Web app",
+      "status": "DONE",
+      "color": "#1b9e63",
+      "caption": "Nothing to do."
+    },
+    {
+      "nodes": [
+        "web",
+        "api"
+      ],
+      "edges": [
+        [
+          "web",
+          "api"
+        ]
+      ],
+      "title": "Create a note",
+      "hops": "Web app → API",
+      "status": "PARTIAL",
+      "color": "#d98a00",
+      "caption": "The API keeps session state in memory; make it stateless."
+    },
+    {
+      "nodes": [
+        "api",
+        "auth"
+      ],
+      "edges": [
+        [
+          "api",
+          "auth"
+        ]
+      ],
+      "title": "Check the session",
+      "hops": "API → Auth",
+      "status": "DONE",
+      "color": "#1b9e63",
+      "caption": "Existing auth already fits the target role."
+    },
+    {
+      "nodes": [
+        "api",
+        "cache",
+        "db"
+      ],
+      "edges": [
+        [
+          "api",
+          "cache"
+        ],
+        [
+          "api",
+          "db"
+        ]
+      ],
+      "title": "Save the note",
+      "hops": "API → Database",
+      "status": "PARTIAL",
+      "color": "#d98a00",
+      "caption": "Database has no replica yet; the cache is MISSING."
+    },
+    {
+      "nodes": [
+        "api",
+        "queue",
+        "worker",
+        "search"
+      ],
+      "edges": [
+        [
+          "api",
+          "queue"
+        ],
+        [
+          "queue",
+          "worker"
+        ],
+        [
+          "worker",
+          "search"
+        ]
+      ],
+      "title": "Make it searchable",
+      "hops": "API → Queue → Worker → Search index",
+      "status": "MISSING",
+      "color": "#d6335a",
+      "caption": "None of queue, worker or search index exists yet."
+    }
+  ]
+}
