@@ -1,0 +1,50 @@
+[
+  {
+    "element": "Web app",
+    "today": "Static pages served by the API host",
+    "target": "Same",
+    "gap": "DONE"
+  },
+  {
+    "element": "API",
+    "today": "Single instance, session state in memory",
+    "target": "Stateless, two or more instances",
+    "gap": "PARTIAL"
+  },
+  {
+    "element": "Auth",
+    "today": "Session cookie",
+    "target": "Token verification",
+    "gap": "DONE"
+  },
+  {
+    "element": "Database",
+    "today": "One SQL instance, no replica",
+    "target": "Primary plus replica",
+    "gap": "PARTIAL"
+  },
+  {
+    "element": "Cache",
+    "today": "None",
+    "target": "Read-through cache",
+    "gap": "MISSING"
+  },
+  {
+    "element": "Job queue",
+    "today": "None",
+    "target": "Queue for indexing jobs",
+    "gap": "MISSING"
+  },
+  {
+    "element": "Worker",
+    "today": "None",
+    "target": "Async indexing worker",
+    "gap": "MISSING"
+  },
+  {
+    "element": "Search index",
+    "today": "None (SQL scan)",
+    "target": "Full-text index",
+    "gap": "MISSING"
+  }
+]

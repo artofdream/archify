@@ -1,0 +1,20 @@
+{
+  "current": [
+    {"id": "request", "label": "Request", "note": "The browser calls the API (Existing).", "steps": [1, 2], "route": "user~api"},
+    {"id": "auth", "label": "Auth", "note": "The API checks the session (Existing).", "steps": [3], "route": "api~auth"},
+    {"id": "store", "label": "Store", "note": "The note is written to the SQL database (Existing).", "steps": [4], "route": "api~db"},
+    {"id": "index", "label": "Search", "note": "Search scans the database directly (Existing).", "steps": [5], "route": "api~db"}
+  ],
+  "target": [
+    {"id": "request", "label": "Request", "note": "Same request path (Proposed).", "steps": [1, 2], "route": "user~api"},
+    {"id": "auth", "label": "Auth", "note": "Token verification in the API (Proposed).", "steps": [3], "route": "api~auth"},
+    {"id": "store", "label": "Store", "note": "Read-through cache in front of the database (Proposed).", "steps": [4], "route": "api~db"},
+    {"id": "index", "label": "Index", "note": "Indexing moves to a queue and a worker (Proposed).", "steps": [5], "route": "api~search"}
+  ],
+  "gaps": [
+    {"id": "request", "label": "Request", "note": "Web app DONE; API PARTIAL (not stateless yet).", "steps": [1, 2], "route": "user~api"},
+    {"id": "auth", "label": "Auth", "note": "DONE: matches the target role.", "steps": [3], "route": "api~auth"},
+    {"id": "store", "label": "Store", "note": "Database PARTIAL (no replica); cache MISSING.", "steps": [4], "route": "api~db"},
+    {"id": "index", "label": "Index", "note": "Queue, worker and search index are all MISSING.", "steps": [5], "route": "api~search"}
+  ]
+}

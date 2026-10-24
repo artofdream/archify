@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Notes service \u2014 Current",
+    "subtitle": "Sample \u00b7 invented system for illustration \u00b7 what exists today",
+    "output": "current.architecture.html",
+    "quality_profile": "standard"
+  },
+  "components": [
+    {
+      "id": "user",
+      "type": "external",
+      "label": "User",
+      "sublabel": "browser",
+      "pos": [
+        20,
+        230
+      ],
+      "size": [
+        100,
+        54
+      ]
+    },
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "Web app",
+      "sublabel": "static pages",
+      "pos": [
+        180,
+        230
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "Existing"
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "API",
+      "sublabel": "REST \u00b7 single instance",
+      "pos": [
+        370,
+        230
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "Existing"
+    },
+    {
+      "id": "auth",
+      "type": "security",
+      "label": "Auth",
+      "sublabel": "session cookie",
+      "pos": [
+        370,
+        70
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "Existing"
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "Database",
+      "sublabel": "one SQL instance",
+      "pos": [
+        790,
+        230
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "Existing"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Sample deployment",
+      "wraps": [
+        "web",
+        "api",
+        "auth",
+        "db"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "user-web",
+      "from": "user",
+      "to": "web",
+      "label": "open"
+    },
+    {
+      "id": "web-api",
+      "from": "web",
+      "to": "api",
+      "label": "POST /notes"
+    },
+    {
+      "id": "api-auth",
+      "from": "api",
+      "to": "auth",
+      "label": "verify token"
+    },
+    {
+      "id": "api-db",
+      "from": "api",
+      "to": "db",
+      "label": "SQL"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Today",
+      "items": [
+        "Single API instance",
+        "Notes stored in one SQL database",
+        "Search scans the database directly"
+      ]
+    }
+  ]
+}

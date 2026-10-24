@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Notes service \u2014 Gaps",
+    "subtitle": "Sample \u00b7 invented system for illustration \u00b7 target minus current",
+    "output": "gaps.architecture.html",
+    "quality_profile": "standard"
+  },
+  "components": [
+    {
+      "id": "user",
+      "type": "external",
+      "label": "User",
+      "sublabel": "browser",
+      "pos": [
+        20,
+        230
+      ],
+      "size": [
+        100,
+        54
+      ]
+    },
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "Web app",
+      "sublabel": "done",
+      "pos": [
+        180,
+        230
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "DONE"
+    },
+    {
+      "id": "api",
+      "type": "messagebus",
+      "label": "API",
+      "sublabel": "partial \u00b7 needs statelessness",
+      "pos": [
+        370,
+        230
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "PARTIAL"
+    },
+    {
+      "id": "auth",
+      "type": "backend",
+      "label": "Auth",
+      "sublabel": "done",
+      "pos": [
+        370,
+        70
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "DONE"
+    },
+    {
+      "id": "cache",
+      "type": "security",
+      "label": "Cache",
+      "sublabel": "missing",
+      "pos": [
+        590,
+        70
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "MISSING"
+    },
+    {
+      "id": "db",
+      "type": "messagebus",
+      "label": "Database",
+      "sublabel": "partial \u00b7 no replica",
+      "pos": [
+        790,
+        230
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "PARTIAL"
+    },
+    {
+      "id": "queue",
+      "type": "security",
+      "label": "Job queue",
+      "sublabel": "missing",
+      "pos": [
+        590,
+        390
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "MISSING"
+    },
+    {
+      "id": "worker",
+      "type": "security",
+      "label": "Worker",
+      "sublabel": "missing",
+      "pos": [
+        790,
+        390
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "MISSING"
+    },
+    {
+      "id": "search",
+      "type": "security",
+      "label": "Search index",
+      "sublabel": "missing",
+      "pos": [
+        990,
+        230
+      ],
+      "size": [
+        130,
+        54
+      ],
+      "tag": "MISSING"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Sample deployment",
+      "wraps": [
+        "web",
+        "api",
+        "auth",
+        "cache",
+        "db",
+        "queue",
+        "worker",
+        "search"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "user-web",
+      "from": "user",
+      "to": "web",
+      "label": "open"
+    },
+    {
+      "id": "web-api",
+      "from": "web",
+      "to": "api",
+      "label": "POST /notes"
+    },
+    {
+      "id": "api-auth",
+      "from": "api",
+      "to": "auth",
+      "label": "verify token"
+    },
+    {
+      "id": "api-db",
+      "from": "api",
+      "to": "db",
+      "label": "SQL"
+    },
+    {
+      "id": "api-cache",
+      "from": "api",
+      "to": "cache",
+      "label": "read-through",
+      "variant": "dashed"
+    },
+    {
+      "id": "api-queue",
+      "from": "api",
+      "to": "queue",
+      "label": "enqueue",
+      "variant": "dashed"
+    },
+    {
+      "id": "queue-worker",
+      "from": "queue",
+      "to": "worker",
+      "label": "consume"
+    },
+    {
+      "id": "worker-search",
+      "from": "worker",
+      "to": "search",
+      "label": "index",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "DONE (legend: Backend)",
+      "items": [
+        "Already matches the target role"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "PARTIAL (legend: Message bus)",
+      "items": [
+        "Exists, below the target level"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "MISSING (legend: Security)",
+      "items": [
+        "Not built yet"
+      ]
+    }
+  ]
+}
