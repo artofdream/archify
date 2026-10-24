@@ -1871,7 +1871,7 @@ function recordDeliveryFailure(options) {
   return recorded;
 }
 
-// Locale warnings for a successfully rendered candidate. Diagnostic renderers
+// Locale and retired-field (meta.views) warnings for a successfully rendered candidate. Diagnostic renderers
 // record them without printing text; validate/deliver disclose them before
 // checking the artifact and reuse the same diagnostics in successful receipts.
 async function specificationLocaleDiagnostics(type, specification) {
@@ -1881,9 +1881,17 @@ async function specificationLocaleDiagnostics(type, specification) {
   } catch {
     return [];
   }
-  if (!meta?.locale) return [];
-  const { localeDiagnostics } = await import('../renderers/shared/i18n.mjs');
-  return localeDiagnostics(type, meta);
+  const diagnostics = [];
+  if (meta?.locale) {
+    const { localeDiagnostics } = await import('../renderers/shared/i18n.mjs');
+    diagnostics.push(...localeDiagnostics(type, meta));
+  }
+  // Loaded only when needed, like i18n, so a document without views never depends on it.
+  if (Array.isArray(meta?.views) && meta.views.length) {
+    const { retiredViewsDiagnostics } = await import('../renderers/shared/retired-views.mjs');
+    diagnostics.push(...retiredViewsDiagnostics(type, meta));
+  }
+  return diagnostics;
 }
 
 function deliverySuccessProvenance(receipt) {

@@ -58,6 +58,22 @@ right. Lane order, IDs, and message semantics are unchanged either way.
 
 `meta.views` is retired. The schemas still accept the old guided-view shape so
 existing files keep validating, but renderers ignore it; do not author it.
+`render`, `validate`, `deliver` and `finalize` warn (non-blocking, exit code
+unchanged) when a document still has a non-empty `meta.views`: diagnostic code
+`meta/views-ignored`, listing each chapter's id and label and whether its
+`note` will not appear. The same warning appears in `diagnostics[]` of
+`--json` receipts.
+
+To carry guided-view content over to 3.x:
+
+- Put status or honesty text that lived in a chapter `note` into the text the
+  reader always sees: node `label`/`sublabel` (or the equivalent text field of
+  the diagram type) or the optional `cards`.
+- Show a path or a comparison of semantic roles with the Viewer's Route and
+  Lens (`#route=<source>~<target>`, `#lens=<kind>~<kind>` links); both are
+  computed from authored relationships and kinds, not from `meta.views`.
+- Delete `meta.views` once its content has moved; see "Upgrading from 2.x" in
+  the 3.0.0 section of `CHANGELOG.md`.
 
 ### Legend presentation contract
 

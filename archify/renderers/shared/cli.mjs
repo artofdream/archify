@@ -19,6 +19,7 @@ import {
   verifyAtomicOutput,
 } from './atomic-output.mjs';
 import { resolveLocale, translateMessage, registerLocale, localeDiagnostics } from './i18n.mjs';
+import { retiredViewsDiagnostics } from './retired-views.mjs';
 import { prepareDiagramBrandMarks } from './brand-marks.mjs';
 
 const outputPathGuards = new Map();
@@ -31,9 +32,13 @@ let renderCandidateSequence = 0;
 // mixing text into failure receipts; validate/deliver disclose them publicly.
 function applyLocaleTranslations(diagramType, diagram) {
   const locale = diagram.meta?.locale;
-  if (!locale) return;
-  registerLocale(locale, diagram.meta.translations);
-  for (const diagnostic of localeDiagnostics(diagramType, diagram.meta)) {
+  if (locale) registerLocale(locale, diagram.meta.translations);
+  const diagnostics = [
+    ...(locale ? localeDiagnostics(diagramType, diagram.meta) : []),
+    // meta.views is retired in 3.x; disclose the silent drop like a locale fallback.
+    ...retiredViewsDiagnostics(diagramType, diagram.meta),
+  ];
+  for (const diagnostic of diagnostics) {
     recordDiagnostic(diagnostic);
     if (process.env.ARCHIFY_DIAGNOSTIC_FORMAT !== 'json') {
       console.warn(`archify: ${diagnostic.message}`);
