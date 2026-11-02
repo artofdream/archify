@@ -67,7 +67,7 @@ for (const lang of ['en', 'zh']) {
     assert.equal(clean(text(find(page, 'recipe-question'))), clean(recipe[lang].question));
     assert.equal(clean(text(find(page, 'recipe-prompt'))), clean(startPromptsFor(recipe, lang).descriptionPrompt));
     for (const evidence of recipe[lang].include) assert.ok(clean(text(find(page, 'include-list'))).includes(clean(evidence)));
-    assert.match(text(find(page, 'install-command')), /npx -y skills add tt-a1i\/archify --skill archify --agent codex --global --copy --yes/);
+    assert.match(text(find(page, 'install-command')), /npx -y skills@latest add https:\/\/archify\.si --skill archify --agent codex --global --copy --yes/);
     assertProofLink(page, find(page, 'proof-link'), lang, recipe.proof);
   });
 }
@@ -75,7 +75,7 @@ test('initial homepage product facts explain identity, inputs, delivery, license
   const page = read('index', 'en');
   const section = find(page, 'about-archify');
   const content = clean(text(section));
-  for (const fact of ['open-source Agent Skill', 'typed JSON', 'interactive HTML', 'Mermaid', 'MIT', 'Codex', 'PNG', 'runtime system behavior', 'stable main']) assert.ok(content.includes(fact), fact);
+  for (const fact of ['open-source Agent Skill', 'typed JSON', 'interactive HTML', 'Mermaid', 'Apache-2.0', 'Codex', 'PNG', 'runtime system behavior', 'stable main']) assert.ok(content.includes(fact), fact);
   const hrefs = links(section).map(link => attr(link, 'href'));
   assert.ok(hrefs.includes('https://github.com/tt-a1i/archify/releases'));
   assert.ok(hrefs.includes('https://github.com/tt-a1i/archify/blob/main/LICENSE'));

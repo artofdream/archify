@@ -31,7 +31,7 @@
 <p align="center">
   <a href="https://github.com/tt-a1i/archify/stargazers"><img src="https://img.shields.io/github/stars/tt-a1i/archify?style=flat-square&amp;color=E5B650&amp;logo=github&amp;label=Stars" alt="GitHub stars" /></a>
   <a href="https://skills.sh/tt-a1i/archify/archify"><img src="https://img.shields.io/badge/installs-130K%2B-0EA5E9?style=flat-square" alt="130K+ installs on skills.sh" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-22c55e?style=flat-square" alt="MIT License" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-22c55e?style=flat-square" alt="Apache License 2.0" /></a>
   <a href="#安装方式"><img src="https://img.shields.io/badge/works_with-Claude_Code_%7C_Codex_%7C_Cursor_%7C_OpenCode-7C3AED?style=flat-square" alt="Works with Claude Code, Codex, Cursor, and OpenCode" /></a>
   <a href="CHANGELOG.md#320--2026-10-18"><img src="https://img.shields.io/badge/version-3.2.0-0891b2?style=flat-square" alt="Stable version 3.2.0" /></a>
 </p>
@@ -60,8 +60,8 @@ https://github.com/user-attachments/assets/88cff7dd-bdf3-4b97-950c-37cc079898b1
 
 支持 Cursor、Claude Code、Codex CLI 和 OpenCode；更多接入方式见下方安装选项。
 
-```bash
-npx skills add tt-a1i/archify -g
+```text
+Install Archify for me by reading https://raw.githubusercontent.com/tt-a1i/archify/main/llms.txt
 ```
 
 把这句话发给你的 Agent：
@@ -126,7 +126,6 @@ API 优先读取 Redis，缓存未命中时查询 PostgreSQL 并回填缓存。
 <td align="center" width="240"><a href="https://www.infistar.cc/register?aff=9N89LEMV&amp;ref_source=link"><img src="docs/assets/sponsors/infistar-logo.svg" alt="Infistar.cc 无限星河" width="140" /></a><br/><strong><a href="https://www.infistar.cc/register?aff=9N89LEMV&amp;ref_source=link">Infistar.cc 无限星河</a></strong></td>
 <td>感谢 Infistar.cc 无限星河赞助 Archify！一个 API Key 覆盖文案、图片与视频创作，支持 GPT、Claude、Gemini、DeepSeek、通义千问、可灵等主流模型，无需分组。大模型低至官方 0.1 折，AI 生图低至 ¥0.06/张。<br/><br/>Archify 专属福利：通过专属链接注册即送 $5 体验额度，并享首充特惠。<br/><br/><a href="https://www.infistar.cc/register?aff=9N89LEMV&amp;ref_source=link">立即体验 Infistar →</a></td>
 </tr>
-<tr><td align="center" width="240"><a href="https://github.com/EverMind-AI/Raven"><img src="docs/assets/sponsors/evermind-archify-raven.png" alt="Archify × Raven" width="200" /></a><br/><strong><a href="https://github.com/EverMind-AI">EverMind</a> · <a href="https://github.com/EverMind-AI/Raven">Raven</a></strong></td><td>感谢 EverMind 赞助 Archify。EverMind 专注 Agent 记忆基础设施，旗下 <a href="https://github.com/EverMind-AI/Raven"><strong>Raven</strong></a> 已支持 Archify Skill，让 Raven 工作流可以直接生成经过验证的交互式系统地图。</td></tr>
 </table>
 
 > 想赞助 Archify？[欢迎通过邮件联系我们。](mailto:2801884530@qq.com)
@@ -215,8 +214,8 @@ Export 菜单支持复制 PNG，并下载静态或动态格式：
 
 ### 1. 安装
 
-```bash
-npx skills add tt-a1i/archify -g
+```text
+Install Archify for me by reading https://raw.githubusercontent.com/tt-a1i/archify/main/llms.txt
 ```
 
 <details>
@@ -225,7 +224,7 @@ npx skills add tt-a1i/archify -g
 显式、非交互地安装到 Cursor：
 
 ```bash
-npx -y skills add tt-a1i/archify --skill archify --agent cursor --global --copy --yes
+npx -y skills@latest add https://archify.si --skill archify --agent cursor --global --copy --yes
 ```
 
 如果只想临时体验：
@@ -473,7 +472,7 @@ node bin/archify.mjs deliver workflow examples/agent-tool-call.workflow.json /tm
 
 <table>
 <tr>
-  <td align="center"><strong><img src="docs/assets/community/wechat.svg" alt="" width="18" /> 微信群</strong><br/><img src="docs/assets/community/wechat-qr.png" alt="Archify Official 微信群二维码" width="300" height="300" /></td>
+  <td align="center"><strong><img src="docs/assets/community/wechat.svg" alt="" width="18" /> 微信群</strong><br/><img src="docs/assets/community/wechat-qr.png" alt="Archify Official 微信群二维码" width="300" height="318" /></td>
   <td align="center"><strong><img src="docs/assets/community/qq.svg" alt="" width="18" /> QQ 群</strong><br/><img src="docs/assets/community/qq-qr.png" alt="Archify Official QQ 群二维码" width="300" height="300" /></td>
 </tr>
 </table>
@@ -482,13 +481,15 @@ node bin/archify.mjs deliver workflow examples/agent-tool-call.workflow.json /tm
 
 ## 官方入口与第三方服务
 
-- **开源项目：** 源码和安装包可按 [MIT 协议](LICENSE)免费使用。
+- **开源项目：** 当前源码及由其构建的安装包可按 [Apache-2.0 协议](LICENSE)使用；历史发行版保留原有许可。
 - **官方网站：** [archify.si](https://archify.si) 目前提供项目介绍、示例和安装指引。
 - **第三方服务：** 是否收费、如何处理数据、提供什么支持，由第三方运营方决定。名称或域名相似不代表官方合作。
 
 ## License
 
-[MIT](LICENSE) —— 可以自由使用、修改和分发。
+[Apache-2.0](LICENSE) —— 可以自由使用、修改和分发。
+
+历史 MIT 授权继续有效，见 [NOTICE](NOTICE) 和 [LICENSE-MIT](LICENSE-MIT)。第三方组件保留各自许可；软件许可不改变用户原创内容的权属，也不授予一般性的 Archify 商标使用权。
 
 ## 参与贡献
 
@@ -521,6 +522,12 @@ node bin/archify.mjs deliver workflow examples/agent-tool-call.workflow.json /tm
 </details>
 
 使用、分享、反馈问题和贡献改进，也都是对项目的支持。
+
+## 贡献者
+
+感谢每一位参与构建 Archify 的人。[欢迎关注他们。](https://github.com/tt-a1i/archify/graphs/contributors) ❤️
+
+<p align="center"><a href="https://github.com/tt-a1i/archify/graphs/contributors"><img alt="Archify 贡献者" src="https://raw.githubusercontent.com/tt-a1i/archify/contributors/contributors.svg" width="1000" /></a></p>
 
 ## Star History
 
