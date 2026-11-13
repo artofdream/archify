@@ -35,9 +35,11 @@ on:
         type: boolean
         default: false
 
+# A tag re-run must not abort an in-flight publish. npm will not accept the
+# same version again; the publish job repairs a missing release record instead.
 concurrency:
   group: dsh-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
 
 jobs:
   contract:
@@ -128,19 +130,35 @@ jobs:
         run: node integrations/deepseek-harness/scripts/pack.mjs --out "$RUNNER_TEMP/archify-dsh.tgz" --json > "$RUNNER_TEMP/pack.json"
       # No NODE_AUTH_TOKEN and no .npmrc token: npm exchanges the OIDC identity
       # for a short-lived credential issued to the configured trusted publisher.
+      # The same version cannot be published twice. If it is already on the
+      # registry, continue so a rerun can still record the GitHub Release.
       - name: Publish with trusted publishing
-        run: npm publish "$RUNNER_TEMP/archify-dsh.tgz" --access public
-      - name: Record the release when none exists
+        run: |
+          version=$(node -p "require('./integrations/deepseek-harness/package.json').version")
+          npm publish "$RUNNER_TEMP/archify-dsh.tgz" --access public && exit 0
+          status=$?
+          published=$(npm view "@tt-a1i/archify-dsh@${version}" version 2>/dev/null || true)
+          if [ "$published" = "$version" ]; then
+            echo "@tt-a1i/archify-dsh@${version} is already on the registry; recording the release"
+            exit 0
+          fi
+          exit "$status"
+      - name: Record the release and verified tarball
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+          asset_name="tt-a1i-archify-dsh.tgz"
+          tarball="$RUNNER_TEMP/archify-dsh.tgz"
+          if assets=$(gh release view "$GITHUB_REF_NAME" --json assets --jq '.assets[].name' 2>/dev/null); then
             echo "release $GITHUB_REF_NAME already exists"
-            exit 0
+            if ! printf '%s\n' "$assets" | grep -Fxq "$asset_name"; then
+              gh release upload "$GITHUB_REF_NAME" "${tarball}#${asset_name}"
+            fi
+          else
+            gh release create "$GITHUB_REF_NAME" \
+              "${tarball}#${asset_name}" \
+              --verify-tag \
+              --latest=false \
+              --title "Archify DSH ${GITHUB_REF_NAME#archify-dsh-v}" \
+              --notes "Published \`@tt-a1i/archify-dsh\` from this tag's verified tarball. See the integration README for the bundled Archify source and acceptance record."
           fi
-          gh release create "$GITHUB_REF_NAME" \
-            "$RUNNER_TEMP/archify-dsh.tgz#tt-a1i-archify-dsh.tgz" \
-            --verify-tag \
-            --latest=false \
-            --title "Archify DSH ${GITHUB_REF_NAME#archify-dsh-v}" \
-            --notes "Published \`@tt-a1i/archify-dsh\` from this tag's verified tarball. See the integration README for the bundled Archify source and acceptance record."
