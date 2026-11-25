@@ -10,6 +10,21 @@
       var btn = document.getElementById('btn-motion');
       var label = document.getElementById('motion-label');
       var motionQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+      var rendering = html.hasAttribute('data-motion-render');
+      if (rendering) {
+        // Render frames seek native animations, including styles from earlier HTML.
+        function prepareRules(rules) {
+          Array.prototype.forEach.call(rules, function (rule) {
+            if (rule.media && rule.media.mediaText === '(prefers-reduced-motion: reduce)') rule.media.mediaText = 'not all';
+            if (rule.cssRules) prepareRules(rule.cssRules);
+          });
+        }
+        Array.prototype.forEach.call(document.styleSheets, function (sheet) {
+          var rules;
+          try { rules = sheet.cssRules; } catch (_) { return; }
+          prepareRules(rules);
+        });
+      }
       var capable = !!(svg && svg.getAttribute('data-animation') === 'trace');
       var readerPaused = false;
       var suspensions = Object.create(null);
@@ -21,6 +36,7 @@
       var entryStarted = false;
       var entryPending = new Set();
       var flowCount = 0;
+      var sequencePlan = null;
 
       // Runtime decoration carries geometry and tree visibility only. Keep each
       // flow beside its authored edge so transforms, clipping and crossover
@@ -374,6 +390,7 @@
           }
           var record = {
             index: records.length,
+            shape: shape,
             len: len,
             from: shape.getAttribute('data-edge-from') || shape.getAttribute('data-composition-edge-from') || '',
             to: shape.getAttribute('data-edge-to') || shape.getAttribute('data-composition-edge-to') || '',
@@ -454,6 +471,15 @@
         var active = records.filter(function (record) { return record.active; });
         if (!active.length && !extras.length) return;
         var cycle = Math.max(RELAY.minCycle, span + RELAY.land + RELAY.rest);
+        if (choreography === 'sequence') {
+          sequencePlan = {
+            cycle: cycle,
+            edges: new Map(active.map(function (record) {
+              return [record.shape, { depart: record.depart, travel: record.travel }];
+            })),
+            nodes: windows
+          };
+        }
         writeKeyframes(active, windows, extras, cycle);
         svg.style.setProperty('--flow-cycle', cycle.toFixed(3) + 's');
         html.style.setProperty('--flow-cycle-chrome', cycle.toFixed(3) + 's');
@@ -522,7 +548,7 @@
         } catch (_) {}
       }
       function reducedMotion() {
-        return !!(motionQuery && motionQuery.matches);
+        return !rendering && !!(motionQuery && motionQuery.matches);
       }
       function hasSuspension() {
         return Object.keys(suspensions).length > 0;
@@ -633,7 +659,7 @@
         };
       }
       function syncVisibility() {
-        if (document.hidden) {
+        if (document.hidden && !rendering) {
           suspensions.visibility = true;
           html.setAttribute('data-document-hidden', 'true');
         } else {
@@ -661,6 +687,7 @@
           release: function () { return false; },
           suspend: function () { return function () { return false; }; },
           isPaused: function () { return true; },
+          reducedMotion: reducedMotion,
           owner: function () { return ''; }
         };
       }
@@ -696,6 +723,7 @@
 
       return {
         capable: true,
+        sequenceRecordingPlan: function () { return sequencePlan; },
         pause: function () { return setPaused(true); },
         resume: function () { return setPaused(false); },
         toggle: function () { return setPaused(!readerPaused); },
@@ -708,6 +736,7 @@
         release: release,
         suspend: suspend,
         isPaused: effectivePaused,
+        reducedMotion: reducedMotion,
         owner: function () { return owner; }
       };
     })();
