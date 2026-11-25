@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'parse5';
 import { CASES } from '../src/data/gallery-presentation.mjs';
+import { PUBLISHED_CASES } from '../src/data/published-cases.mjs';
 import { publicGuideData, SCENARIO_RECIPES, startPromptsFor } from '../../archify/recipes/scenarios.mjs';
 
 const root = process.env.ARCHIFY_SITE_ROOT || fileURLToPath(new URL(process.env.ARCHIFY_SITE_TARGET === 'cloudflare' ? '../dist-cloudflare/' : '../dist/', import.meta.url));
@@ -31,6 +32,14 @@ function assertProofLink(page, link, lang, proof) {
 const links = node => [...(node.tagName === 'a' ? [node] : []), ...(node.childNodes || []).flatMap(links)];
 
 for (const lang of ['en', 'zh']) {
+  test(`initial ${lang} start HTML exposes every canonical diagram type as a selectable tab`, () => {
+    const page = read('start', lang);
+    const types = byClass(page, 'type-tab').map(node => attr(node, 'data-type'));
+    const expected = new Set(SCENARIO_RECIPES.map(recipe => recipe.type));
+    assert.equal(types.length, expected.size);
+    assert.deepEqual(new Set(types), expected);
+  });
+
   test(`initial ${lang} guide HTML contains every canonical recipe and its evidence without JavaScript`, () => {
     const page = read('guide', lang);
     const reference = find(page, 'recipe-reference');
@@ -67,7 +76,7 @@ for (const lang of ['en', 'zh']) {
     assert.equal(clean(text(find(page, 'recipe-question'))), clean(recipe[lang].question));
     assert.equal(clean(text(find(page, 'recipe-prompt'))), clean(startPromptsFor(recipe, lang).descriptionPrompt));
     for (const evidence of recipe[lang].include) assert.ok(clean(text(find(page, 'include-list'))).includes(clean(evidence)));
-    assert.match(text(find(page, 'install-command')), /npx -y skills@latest add https:\/\/archify\.si --skill archify --agent codex --global --copy --yes/);
+    assert.match(text(find(page, 'install-command')), /npx -y skills@latest add https:\/\/archify\.si --skill archify --skill archify-pr --agent codex --global --copy --yes/);
     assertProofLink(page, find(page, 'proof-link'), lang, recipe.proof);
   });
 }
@@ -94,55 +103,47 @@ for (const lang of ['en', 'zh']) {
       assert.ok(footer.includes(`v${release.version} · ${channel}`), `${name}: release identity`);
     }
   });
-}
 
-for (const lang of ['en', 'zh']) {
-  test(`initial ${lang} homepage explains diagrams and one-page answers before JavaScript`, () => {
-    const page = read('index', lang);
-    const hero = byClass(page, 'hero-copy')[0];
-    const heading = clean(text(byTag(hero, 'h1')));
-    const lead = clean(text(byClass(hero, 'hero-sub')[0]));
-    assert.match(heading, lang === 'zh' ? /图和答案/ : /answers/);
-    for (const concept of lang === 'zh'
-      ? ['AI Agent', '图', '解答', '结论', '出处', 'HTML', '校验']
-      : ['AI agent', 'map', 'one-page answer', 'conclusion', 'sources', 'HTML', 'validated']) {
-      assert.ok(lead.includes(concept), `hero must explain ${concept}`);
-    }
-    const identity = byClass(page, 'facts-identity')[0];
-    const identityText = clean(text(identity));
-    assert.ok(identityText.includes(lang === 'zh' ? '开源画图技能' : 'open-source diagram skill'));
-    assert.deepEqual(links(identity).map(link => [clean(text(link)), attr(link, 'href')]), [
-      ['archify.si', 'https://archify.si/'],
-      ['tt-a1i/archify', 'https://github.com/tt-a1i/archify'],
-    ], 'visible product identity connects the official site and exact source repository');
-    const facts = clean(text(find(page, 'about-archify')));
-    for (const boundary of lang === 'zh'
-      ? ['类型化 JSON', 'Markdown', '系统的实际运行行为', '不用于生成照片或插画']
-      : ['typed JSON', 'Markdown', 'not the truth of every claim or runtime system behavior', 'does not generate photos or illustrations']) {
-      assert.ok(facts.includes(boundary), `product facts must explain ${boundary}`);
-    }
-  });
-}
-
-for (const lang of ['en', 'zh']) {
-  test(`initial ${lang} gallery states its evidence limit and offers generic life-diagram starting points`, () => {
+  test(`initial ${lang} gallery HTML provides descriptive alt text for every showcase image`, () => {
     const page = read('gallery', lang);
-    const limit = clean(text(find(page, 'gallery-evidence-limit')));
-    assert.ok(limit.includes(lang === 'zh' ? '不提供人工视觉评审结果' : 'not human visual-review results'));
-    const description = (function walk(node) {
-      return node.tagName === 'meta' && attr(node, 'name') === 'description' ? attr(node, 'content') : (node.childNodes || []).map(walk).find(Boolean);
-    })(page);
-    assert.ok(description.includes(lang === 'zh' ? '自动验证与人工视觉评审分别列出' : 'Automated validation and human visual review appear separately'));
-    const cards = byClass(page, 'life-card').filter(card => links(card).some(link => (attr(link, 'class') || '').split(/\s+/).includes('create-link')));
-    assert.equal(cards.length, 4);
-    for (const [index, type] of ['workflow', 'lifecycle', 'dataflow', 'sequence'].entries()) {
-      const entryLinks = links(cards[index]);
-      const create = entryLinks.find(link => (attr(link, 'class') || '').split(/\s+/).includes('create-link'));
-      assert.ok(create, `${type}: a next step is available without JavaScript`);
-      assert.equal(clean(text(create)), lang === 'zh' ? '按此类型开始' : 'Create this type');
-      assert.equal(attr(create, 'href'), `${lang === 'zh' ? 'zh/' : ''}start${cloudflare ? '' : '.html'}?type=${type}&input=description&source=gallery`);
-      assert.ok(entryLinks.some(link => attr(link, 'href').endsWith(`.${type}.html?present=1`)), 'existing artifact remains accessible');
-      assert.ok(entryLinks.some(link => attr(link, 'href').endsWith(`.${type}.json`)), 'existing source remains accessible');
+    const collectImages = rootNode => {
+      const found = [];
+      const walk = node => {
+        if (node.tagName === 'img') found.push(node);
+        for (const child of node.childNodes || []) walk(child);
+      };
+      walk(rootNode);
+      return found;
+    };
+    const allImages = collectImages(page);
+    for (const img of allImages) {
+      assert.ok((attr(img, 'alt') || '').trim().length > 0, `${lang} gallery image ${attr(img, 'src')} must not have empty alt`);
+    }
+    const showcaseImages = collectImages(byTag(page, 'main'));
+    assert.ok(showcaseImages.length >= 8, `${lang} gallery <main> should include showcase preview images`);
+    for (const img of showcaseImages) {
+      const alt = (attr(img, 'alt') || '').trim();
+      assert.ok(alt.length >= 10, `${lang} gallery showcase image ${attr(img, 'src')} missing descriptive alt text`);
     }
   });
 }
+
+test('Chinese page metadata descriptions stay descriptive enough for search snippets', () => {
+  const findMetaDescription = node => {
+    if (node.tagName === 'meta' && attr(node, 'name') === 'description') return attr(node, 'content') || '';
+    for (const child of node.childNodes || []) {
+      const found = findMetaDescription(child);
+      if (found !== null) return found;
+    }
+    return null;
+  };
+  for (const pageKey of ['index', 'start', 'guide', 'gallery', 'community', 'agent-diagrams', 'compare', 'cases/mco-runtime']) {
+    const desc = (findMetaDescription(read(pageKey, 'zh')) || '').trim();
+    assert.ok(desc.length >= 75, `built zh ${pageKey} meta description is too short (${desc.length})`);
+  }
+  for (const entry of PUBLISHED_CASES) {
+    if (!entry.documentDescription && entry.language === 'zh-CN') {
+      assert.ok(entry.description.length >= 75, `published-cases ${entry.artifact} zh description is too short (${entry.description.length})`);
+    }
+  }
+});

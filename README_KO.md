@@ -10,6 +10,8 @@
 
 <p align="center">아이디어, 질문, 계획을 AI 에이전트에게 설명하면 Archify가 탐색하고 수정하고 공유할 수 있는 인터랙티브 HTML을 만듭니다. 여행 일정과 학습 지도부터 복잡한 시스템까지 원하는 형태로 발전시킬 수 있습니다.</p>
 
+<p align="center"><strong>10가지 다이어그램 · 4가지 스타일의 한 페이지 답변 · 아키텍처 진단 · 1080p 영상 Story · PR/MR 변경 설명</strong></p>
+
 <p align="center">
   <a href="https://tt-a1i.github.io/archify/gallery.html"><strong>라이브 데모</strong></a> &nbsp;·&nbsp;
   <a href="#start"><strong>시작하기</strong></a> &nbsp;·&nbsp;
@@ -24,13 +26,14 @@
   <a href="https://github.com/tt-a1i/archify/stargazers"><img src="https://img.shields.io/github/stars/tt-a1i/archify?style=flat-square&amp;color=E5B650&amp;logo=github&amp;label=Stars" alt="GitHub stars" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-22c55e?style=flat-square" alt="Apache License 2.0" /></a>
   <a href="archify/SKILL.md"><img src="https://img.shields.io/badge/Agent-Skill-7C3AED?style=flat-square" alt="Agent Skill" /></a>
+  <a href="#archify-지원하기"><img src="https://img.shields.io/badge/Support-E2500E?style=flat-square" alt="Support Archify" /></a>
 </p>
 
 ## Archify 살펴보기
 
 <!-- archify-launch-video -->
 
-https://github.com/user-attachments/assets/78570807-ba1d-4737-953f-55504a378a87
+https://github.com/user-attachments/assets/6a0d6637-e3af-43af-a733-4b4b53da0542
 
 **한 문장으로 저장소를 지도처럼 파악하세요.** [인터랙티브 예제 보기 ↗](https://tt-a1i.github.io/archify/gallery.html)
 
@@ -39,6 +42,8 @@ https://github.com/user-attachments/assets/78570807-ba1d-4737-953f-55504a378a87
 ### 설치한 뒤 아이디어 설명하기
 
 Cursor, Claude Code, Codex CLI, OpenCode에서 사용할 수 있습니다.
+
+**AI 에이전트에게 맡기기.** 다음 문장을 그대로 붙여 넣으세요.
 
 ```text
 Install Archify for me by reading https://raw.githubusercontent.com/tt-a1i/archify/main/llms.txt
@@ -77,6 +82,8 @@ Archify로 한 페이지로 답해 줘: API P99가 80 ms에서 600 ms로 올랐�
 평균은 거의 그대로야. 원인은 무엇이고 어떻게 조사해야 해?
 ```
 
+기본적으로 복잡한 흐름, 문제 진단 결과, 선택지 비교, 테스트 보고서 같은 답에서는 요청하지 않아도 에이전트가 페이지를 만듭니다. 답장에는 채팅에서 바로 읽을 수 있는 짧은 결론이 남고, 마지막 줄은 "테스트 보고서 열기" 같은 페이지 링크입니다. 짧은 답, 텍스트만 원하는 요청, 생성에 실패한 페이지에는 페이지도 링크도 붙지 않습니다. 요청할 때만 페이지를 만들게 하려면 에이전트에게 그렇게 말하거나 전역 규칙 파일(`~/.codex/AGENTS.md`, `~/.claude/CLAUDE.md` 등)에 `[archify explainer: on-demand]`를 추가하세요. `[archify explainer: always-on]`은 결론이 있는 모든 답에 간결한 페이지를 붙이며, 이 줄을 지우면 기본 동작으로 돌아갑니다.
+
 라이브 예시: [처음 HTTPS 접속(영어)](https://archify.si/cases/explainer/tls-first-visit.html) · [P99 지연(중국어)](https://archify.si/cases/explainer/p99-tail-latency.html) · [저장소에서 읽은 Archify finalize(중국어)](https://archify.si/cases/explainer/finalize-delivery.html) · [첫 임대 체크리스트(중국어)](https://archify.si/cases/explainer/first-rental.html)
 
 ## 무엇을 보여줄 수 있나요?
@@ -88,24 +95,65 @@ Archify로 한 페이지로 답해 줘: API P99가 80 ms에서 600 ms로 올랐�
 
 [Proof Lab](https://tt-a1i.github.io/archify/gallery.html)에는 저장소에 포함된 시나리오와 JSON 소스, 검증 결과가 있습니다.
 
+### 저장소 진단하기
+
+<sub>CODE ANALYSIS · Skill에 내장, 추가 설치 없음</sub>
+
+| 의존성 별 지도 | 같은 분석의 3D 모델 |
+|---|---|
+| [![Atlas 별 지도: 모듈이 원을 따라 놓이고 파일 의존성이 그 안을 가로지르며, 사이드 패널에 발견 사항과 결합도가 표시됨](docs/assets/code-analysis-views/atlas.png)](archify/modules/code-analysis/docs/USAGE.md) | [![Atlas 3D: 가장 많이 의존되는 모듈이 줄기가 되고, 다른 모듈은 의존 계층 높이에서 가지를 뻗음](docs/assets/code-analysis-views/atlas-3d.png)](archify/modules/code-analysis/docs/USAGE.md) |
+
+**아키텍처 진단**은 저장소를 읽고 코드가 실제로 어떻게 연결되어 있는지 보여줍니다. 순환 의존성, 결합이 지나친 모듈, 복잡도 핫스팟, 레이어 규칙 위반을 근거 소스 링크와 에이전트에게 그대로 넘길 수 있는 수정 작업과 함께 보여줍니다. 아키텍처 다이어그램과 함께 쓰면 각 컴포넌트에 문제 개수가 표시됩니다. JS/TS, Python, Java, Go, Rust, C, C++를 지원하며 결과는 오프라인으로 열 수 있는 HTML 파일 하나입니다.
+
+```text
+Use archify Code Analysis on this repository: show module coupling, dependency cycles and hotspots.
+```
+
+[Code Analysis 가이드](archify/modules/code-analysis/docs/USAGE.md)
+
+### 스토리나 PR로 설명하기
+
+<sub>STORY · PR 워크스루</sub>
+
+- **Story 영상.** 에이전트에게 요청하면 어떤 다이어그램에도 안내 스토리를 추가할 수 있습니다. 페이지에 타임라인과 자막이 있는 Story 모드가 생기고, **Export → Story video**로 1080p, 60 fps 영상(WebM 또는 MP4)을 내보낼 수 있습니다. 여러 다이어그램을 하나의 스테이지 페이지나 영상으로 엮을 수도 있습니다. [Story 작성 가이드](archify/references/story-authoring.md)
+- **PR 워크스루.** 에이전트에게 PR이나 브랜치 설명을 요청하면 Archify가 변경 사항을 다이어그램 위에 직접 표시하고, 라이트/다크 다이어그램을 GitHub PR이나 GitLab MR에 첨부할 수 있습니다. 기본 설치에 포함된 `archify-pr` Skill은 PR을 준비할 때 실질적인 변경이 있을 때만 제안합니다. [PR 리뷰](archify/references/pr-review.md)
+
+```text
+Use archify to add a guided story to this diagram and export it as a video.
+```
+
 ## 빠른 시작
 
-**현재 안정 버전:** `v3.2.0`. [변경 이력](CHANGELOG.md#320--2026-10-18)을 확인하세요.
+**현재 안정 버전:** `v3.3.2`. [변경 이력](CHANGELOG.md#332--2026-11-25)을 확인하세요.
 
 ### 1. 설치
+
+**AI 에이전트에게 맡기기**
+
+다음 문장을 그대로 붙여 넣으세요.
 
 ```text
 Install Archify for me by reading https://raw.githubusercontent.com/tt-a1i/archify/main/llms.txt
 ```
 
-<details>
-<summary>다른 설치 방법과 업데이트 확인 동작</summary>
+확인 없이 설치할 수도 있습니다. `--agent`는 하나, 또는 전환 대상마다 반복합니다 (`cursor`, `codex`, `claude-code`, `opencode`, `github-copilot`). `--copy`는 심볼릭 링크 대신 파일을 복사합니다.
 
-비대화형 Cursor 설치:
+Cursor에만 설치:
 
 ```bash
-npx -y skills@latest add https://archify.si --skill archify --agent cursor --global --copy --yes
+npx -y skills@latest add https://archify.si --skill archify --skill archify-pr --agent cursor --global --copy --yes
 ```
+
+또는 다섯 에이전트가 모두 필요한 경우에만:
+
+```bash
+npx -y skills@latest add https://archify.si --skill archify --skill archify-pr --agent cursor --agent codex --agent claude-code --agent opencode --agent github-copilot --global --copy --yes
+```
+
+기본 설치에는 `archify-pr` 컴패니언이 포함됩니다. 문서, 잠금 파일, 포맷팅 같은 작은 변경에는 조용히 있고, PR을 준비할 때 실질적인 diff가 있을 때만 다이어그램을 제안합니다. 에이전트 전역 규칙 파일에 `[archify pr: on-demand]`를 추가하면 제안을 끌 수 있습니다. `/archify`만 남기려면 `npx -y skills@latest remove archify-pr --agent cursor --global --yes`로 컴패니언을 제거하세요(프로젝트 전용 설치에서는 `--global`을 생략합니다). 이미 `/archify`만 설치되어 있다면 `npx -y skills@latest add https://archify.si --skill archify-pr --agent cursor --global --copy --yes`로 컴패니언을 추가하세요.
+
+<details>
+<summary>다른 설치 방법과 업데이트 확인 동작</summary>
 
 설치하지 않고 사용해 보기:
 
@@ -113,7 +161,7 @@ npx -y skills@latest add https://archify.si --skill archify --agent cursor --glo
 npx skills use tt-a1i/archify@archify --agent codex
 ```
 
-Archify는 선택적 업데이트 알림을 위해 고정된 stable manifest를 GET할 수 있지만, 업데이트를 다운로드하거나 설치하지는 않습니다. `ARCHIFY_UPDATE_CHECK_DISABLED=1`을 설정하면 네트워크 요청과 알림 상태 저장을 모두 끌 수 있습니다.
+Archify는 선택적 업데이트 알림을 위해 고정된 stable manifest를 GET할 수 있지만, 업데이트를 다운로드하거나 설치하지는 않습니다. `ARCHIFY_UPDATE_CHECK_DISABLED=1`을 설정하면 네트워크 요청과 알림 상태 저장을 모두 끌 수 있습니다. 느린 확인은 백그라운드에서 완료되어 다음 전달 시 알림을 표시할 수 있습니다. 업데이트가 확인되면 공간이 충분한 넓은 다이어그램의 상단 바에 닫을 수 있는 알림을 표시하고, 그 외에는 푸터에 표시합니다. 알림은 오프라인으로 작동하며 네트워크 요청을 보내지 않습니다. Agent용 업데이트 프롬프트를 한 번에 복사하는 버튼과 릴리스 노트 링크가 있습니다. `--no-update-notice`를 전달하거나 `ARCHIFY_UPDATE_NOTICE_DISABLED=1`을 설정하면 페이지가 바뀌지 않습니다.
 
 </details>
 
@@ -123,9 +171,31 @@ Archify는 선택적 업데이트 알림을 위해 고정된 stable manifest를 
 Archify로 그려 줘: Browser -> API -> Redis cache -> PostgreSQL fallback.
 ```
 
+Archify에 내장된 **아키텍처 진단**은 저장소의 의존성을 방사형 별 지도와 회전할 수 있는 3D 모델로 보여줍니다. 기존 아키텍처 다이어그램의 구성 요소별로 발견 사항의 개수를 표시하며, 순환 의존성이나 다이어그램에 빠진 의존성을 선택하면 관련 소스 코드를 확인할 수 있습니다. 저장소를 바탕으로 만든 아키텍처 다이어그램을 전달하면 Archify가 요약 끝에 진단으로 할 수 있는 일을 알려 주고, 다이어그램 오른쪽 위에도 설명을 여는 버튼이 표시됩니다. 진단은 사용자가 동의할 때만 시작합니다. 별도로 설치할 필요가 없습니다. 자세한 내용은 [Code Analysis 사용 가이드](archify/modules/code-analysis/docs/USAGE.md)를 참고하세요.
+
+```text
+Use archify Code Analysis on this repository: show module coupling, dependency cycles and hotspots.
+```
+
 ### 3. 대화로 다듬기
 
 `Redis 추가`, `인증을 왼쪽으로 이동`, `롤백 경로 강조`처럼 구체적인 요청을 이어 가세요. Archify는 선택적 수정을 위해 typed source를 유지합니다.
+
+## DeepSeek Harness에서 사용해 보기
+
+<p align="center"><a href="integrations/deepseek-harness/README.md"><img src="docs/assets/archify-dsh-lockup.svg" alt="Archify × DSH" width="440" /></a></p>
+
+Archify는 커뮤니티 플러그인 **`@tt-a1i/archify-dsh`**를 통해 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)(DSH)에서도 동작합니다. 1.2.0은 Archify 3.3.0 Skill을 포함하므로, 명령 하나로 dsh 세션에서 다이어그램, 한 페이지 답변, 코드 분석을 사용할 수 있습니다.
+
+```bash
+dsh plugin --profile web add @tt-a1i/archify-dsh@1.2.0
+```
+
+그다음 `Use the archify skill to map this repository's runtime architecture.`라고 요청하세요.
+
+<p align="center"><a href="integrations/deepseek-harness/README.md#install"><img src="https://img.shields.io/badge/Archify_%C3%97_DSH_%EC%82%AC%EC%9A%A9%ED%95%B4_%EB%B3%B4%EA%B8%B0-%EC%84%A4%EC%B9%98_%EA%B0%80%EC%9D%B4%EB%93%9C_%E2%86%92-0856F5?style=for-the-badge" alt="Archify × DSH 사용해 보기: 설치 가이드" /></a></p>
+
+<sub>개발자 프리뷰 `@deepseek-ai/dsh@0.2.2-rc.5`, Node `^22.19.0 || >=24.0.0`용 커뮤니티 통합입니다. DeepSeek 공식 제품이 아닙니다. 호환 범위, 업그레이드, 제거는 [설치 가이드](integrations/deepseek-harness/README.md)를 참고하세요.</sub>
 
 ## 적합한 다이어그램 고르기
 
@@ -186,6 +256,7 @@ node bin/archify.mjs validate workflow examples/agent-tool-call.workflow.json --
 | 역할 하나 또는 둘 비교 | `L` 또는 `LENS` |
 | 개요 지도 열기 | `M` 또는 `MAP` |
 | 프레젠테이션 모드 | `F` |
+| 안내 스토리 재생 또는 영상 내보내기(스토리가 있는 다이어그램) | 모션 컨트롤 → `Story` · Export → `Story video` |
 | 시각 스타일, 테마, 내보내기 | `S` / `T` / `E` |
 | 확대/축소 및 초기화 | `+` / `-` / `0` |
 
@@ -205,7 +276,7 @@ node bin/archify.mjs validate workflow examples/agent-tool-call.workflow.json --
 - [스키마 참고](archify/schemas/README.md) · [Skill과 렌더러 계약](archify/SKILL.md) · [예제](archify/examples/) · [Agent 작성 가이드](docs/authoring-cookbook.md)
 - [변경 이력](CHANGELOG.md) · [로드맵](ROADMAP.md) · [생성된 Proof Lab](https://tt-a1i.github.io/archify/gallery.html)
 
-자동 Mermaid 파싱, 범용 자동 레이아웃, 호스팅 공유, WYSIWYG 편집기는 현재 범위에 포함되지 않습니다.
+자동 Mermaid 파싱, 호스팅 공유, WYSIWYG 편집기는 현재 범위에 포함되지 않습니다. 아키텍처 다이어그램은 `layout.mode: "auto"`로 자동 배치를 켤 수 있습니다. 다른 다이어그램은 각 렌더러의 배치 규칙을 따릅니다. 예를 들어 트리 다이어그램은 지정한 부모-자식 관계를 바탕으로 노드 위치를 계산합니다.
 
 <a id="community"></a>
 
@@ -226,6 +297,30 @@ node bin/archify.mjs validate workflow examples/agent-tool-call.workflow.json --
 ## 기여하기
 
 Issue, Pull Request, 실제 사용 사례 다이어그램을 환영합니다. [기여 가이드](CONTRIBUTING.md)에서 시작하세요. 실패는 재현 가능한 버그 양식으로 제보하고, 검증된 다이어그램은 [커뮤니티 Showcase 양식](https://github.com/tt-a1i/archify/issues/new?template=showcase.yml)으로 제출할 수 있습니다.
+
+## Archify 지원하기
+
+Archify가 도움이 되었다면, 지속적인 개발을 지원해 주실 수 있습니다. 프로젝트가 계속 이어지도록 응원해 주셔서 감사합니다 ❤️
+
+<details>
+<summary>WeChat Pay로 지원하기</summary>
+
+아래 QR 코드를 WeChat으로 스캔하거나, 이미지를 저장한 뒤 WeChat에서 인식하세요.
+
+<p align="center"><img src="docs/assets/support/wechat-pay.png" alt="Archify 유지 관리자를 지원하는 WeChat Pay QR 코드" width="240" /></p>
+
+</details>
+
+<details>
+<summary>Alipay로 지원하기</summary>
+
+아래 QR 코드를 Alipay로 스캔하거나, 이미지를 저장한 뒤 Alipay에서 인식하세요.
+
+<p align="center"><img src="docs/assets/support/alipay.png" alt="Archify 유지 관리자를 지원하는 Alipay QR 코드(이름은 가려져 있습니다)" width="240" /></p>
+
+</details>
+
+Archify를 사용하고, 공유하고, 버그를 제보하고, 개선에 기여하는 것도 프로젝트에 도움이 됩니다.
 
 ## 기여자
 
